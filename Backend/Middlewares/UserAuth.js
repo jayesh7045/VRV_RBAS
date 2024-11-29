@@ -1,4 +1,4 @@
-const authorize = (roles = []) => {
+export const authorize = (roles = []) => {
     // Convert roles to an array if it's a single role
     if (typeof roles === "string") roles = [roles];
   

@@ -3,8 +3,9 @@ import User from "../Models/User.model.js";
 import generateToken from "../Utils/generateJWT.js";
 import { OtpModel } from "../Models/OTP.model.js";
 import { transporter, generateOTP } from "./otp.js";
+import dotenv from "dotenv"
 import jwt from "jsonwebtoken";
-
+dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET
 
@@ -62,8 +63,7 @@ export const SignupUser = async (req, res) => {
     }
 };
 
-// Verify OTP
-export const verifyOtp = async (req, res) => {
+export const verify_otp = async (req, res) => {
     const { email, otp } = req.body;
 
     try {
@@ -90,8 +90,8 @@ export const verifyOtp = async (req, res) => {
 
 // Login User
 export const loginUser = async (req, res) => {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username });
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
     
     if (!user) return res.status(404).json({ message: "User not found" });
   
