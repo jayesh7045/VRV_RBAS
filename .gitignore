@@ -9,7 +9,7 @@
 .env
 # testing
 /coverage
-
+./Frontend/frontend/node_modules
 # production
 /build
 

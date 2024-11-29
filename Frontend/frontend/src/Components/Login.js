@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-function Login({hasAccount, createAccount}) {
+function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -19,10 +19,15 @@ function Login({hasAccount, createAccount}) {
           "Content-Type": "application/json",
         },
       });
-      const  userData  = JSON.parse(localStorage.getItem("userData"));
-      console.log(userData.name)
+      console.log(res)
+      // Assume the API response contains user data
+      const userData = res.data; // Update this to match your API's response structure
+  
+      // Store userData in localStorage
       
-      console.log("Jayesh")
+     
+  
+      // Navigate using userData's name
       navigate(`/rooms/${userData.name}`);
     } catch (error) {
       if (error.response) {
@@ -34,7 +39,6 @@ function Login({hasAccount, createAccount}) {
       setLoading(false);
     }
   };
-  
   
 
   return (
@@ -123,7 +127,7 @@ function Login({hasAccount, createAccount}) {
                 <button
                   onClick={handleSubmit}
                   type="submit"
-                  class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  class="w-full text-black bg-green-400 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
                   Login
                 </button>
@@ -133,7 +137,7 @@ function Login({hasAccount, createAccount}) {
                     href="#"
                     class="font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
-                    <button onClick={()=>createAccount(false)}>Signup here</button>
+                    <button onClick={()=>navigate("/signup")}>Signup here</button>
                   </a>
                 </p>
               </div>

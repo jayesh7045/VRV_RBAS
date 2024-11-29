@@ -4,13 +4,14 @@ import bodyParser from "body-parser"
 import cors from "cors"
 import { connectDB } from "./DB/index.js";
 import authRoutes from "./Routes/UserAuthRoutes.js"
-
+import roomsRoutes from "./Routes/Rooms.routes.js";
 dotenv.config();
 
 const app = express();
 app.use(cors())
 app.use(bodyParser.json());
 app.use('/api/auth/', authRoutes)
+app.use('/api/auth/', roomsRoutes)
 connectDB()
 app.get("/", (req, res)=>{
     res.send("Server is Running");

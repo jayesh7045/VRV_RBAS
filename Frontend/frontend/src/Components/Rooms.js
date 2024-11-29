@@ -13,6 +13,7 @@ function Rooms() {
       transform: "translate(-50%, -50%)",
     },
   };
+  const [userRole, setUserRole] = useState("");
   const {name} = useParams();
   const [user, setUser] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,6 +32,11 @@ function Rooms() {
         const response = await axios.get(
           "http://localhost:8000/api/auth/getallrooms"
         );
+        const userResponse = await axios.get("/api/auth/userinfo", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      setUserRole(userResponse.data.role);
+
         if (!response) {
           setLoading(true);
         }
@@ -66,7 +72,20 @@ function Rooms() {
 
     setTempRooms(filteredRooms);
   }, [wifi, washing, rooms]);
-
+  const deleteRoom = async (roomId) => {
+    if (window.confirm("Are you sure you want to delete this room?")) {
+        try {
+            await axios.delete(`/api/rooms/${roomId}`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            });
+            alert("Room deleted successfully!");
+            setRooms(rooms.filter((room) => room._id !== roomId)); // Update UI
+        } catch (error) {
+            console.error("Error deleting room:", error);
+            alert("Failed to delete the room.");
+        }
+    }
+};
   return (
     <div>
       <div className="text-green-600  font-bold text-[1.8rem] flex justify-center">
@@ -110,6 +129,11 @@ function Rooms() {
                         Contact Us
                       </button>
                     </a>
+                    {userRole==='admin' && <a href={`/owner/${room.owner_id}`}>
+                      <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                        Delete Data
+                      </button>
+                    </a>}
                   </div>
                 </div>
               </div>

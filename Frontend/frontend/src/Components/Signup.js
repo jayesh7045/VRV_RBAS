@@ -10,7 +10,8 @@ function Signup() {
     email: "",
     password: "",
     contact : "1234567890",
-    role : "user"
+    role : "user",
+    admincode : ""
   });
 
   const handleChange = (e) => {
@@ -19,7 +20,13 @@ function Signup() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        const d = localStorage.getItem('role');
+        setValue({
+          ...RegistrationValue, ['role'] : d
+        })
+        if(RegistrationValue.admincode === 'admin@007'){
+          localStorage.setItem('isadmin', true)
+        }
         try {
             const response = await axios.post(
                 "http://localhost:8000/api/auth/signup",
@@ -30,7 +37,7 @@ function Signup() {
                     },
                 }
             );
-            console.log("Jayu")
+          
             console.log(response)
             if (response.data.success === true) {
                 console.log("Registration successful");
@@ -68,7 +75,7 @@ function Signup() {
           </a>
           <div class="w-full  bg-blue-100 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-black">
                 Create and account
               </h1>
               <div>
@@ -110,6 +117,24 @@ function Signup() {
                 </div>
                 <div>
                   <label
+                    for="email"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Enter Admin Code
+                  </label>
+                  <input
+                    value={RegistrationValue.admincode}
+                    onChange={handleChange}
+                    type="text"
+                    name="admincode"
+                    id="admincode"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="I am admin"
+                
+                  />
+                </div>
+                <div>
+                  <label
                     for="password"
                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
@@ -126,6 +151,7 @@ function Signup() {
                     required=""
                   />
                 </div>
+                
                 <div class="flex items-start">
                   <div class="flex items-center h-5">
                     <input
@@ -153,7 +179,7 @@ function Signup() {
                 </div>
                 <button
                   onClick={handleSubmit}
-                  class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 pb-[0.6rem] focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  class="w-full text-black bg-green-400 hover:bg-primary-700 focus:ring-4 pb-[0.6rem] focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
                   Create an account
                 </button>
