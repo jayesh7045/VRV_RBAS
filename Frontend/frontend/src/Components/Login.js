@@ -1,59 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-function Signup() {
-
+function Login({hasAccount, createAccount}) {
   const navigate = useNavigate();
-  const [RegistrationValue, setValue] = useState({
-    name: "",
-    email: "",
-    password: "",
-    contact : "1234567890",
-    role : "user"
-  });
-
-  const handleChange = (e) => {
-    setValue({ ...RegistrationValue, [e.target.name]: e.target.value });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [loginValues, setLoginValues] = useState({email : "", password: ""});
+  const handleChange = (e)=>{
+    setLoginValues({...loginValues, [e.target.name] :e.target.value})
+  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const res = await axios.post('http://localhost:8000/api/auth/login', loginValues, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const  userData  = JSON.parse(localStorage.getItem("userData"));
+      console.log(userData.name)
+      
+      console.log("Jayesh")
+      navigate(`/rooms/${userData.name}`);
+    } catch (error) {
+      if (error.response) {
+        setError(error.response.data.message);
+      } else {
+        setError('An error occurred while processing your request. Please try again later.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        try {
-            const response = await axios.post(
-                "http://localhost:8000/api/auth/signup",
-                RegistrationValue,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-            console.log("Jayu")
-            console.log(response)
-            if (response.data.success === true) {
-                console.log("Registration successful");
-                const token = response.data.token;
-                localStorage.setItem('token', token);
-                localStorage.setItem('userData', JSON.stringify({
-                    email: RegistrationValue.email,
-                    name: RegistrationValue.name,
-                    
-                  }));
-                navigate("/otp"); // Correct relative route
-            } else {
-                console.log("Registration failed");
-            }
-        } catch (err) {
-            console.error(err);
-            alert("User Already Exists or another error occurred");
-        }
-    };
+  
+  
 
   return (
     <div>
-      <section className="dark:bg-gray-900">
+      <section class=" dark:bg-gray-900">
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <a
             href="#"
@@ -66,30 +52,12 @@ function Signup() {
             />
             Welcome Champion
           </a>
-          <div class="w-full  bg-blue-100 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+          <div class="w-full bg-blue-100 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Create and account
+                Login
               </h1>
-              <div>
-                <div>
-                  <label
-                    for="name"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Your Username
-                  </label>
-                  <input
-                    value={RegistrationValue.name}
-                    onChange={handleChange}
-                    type="name"
-                    name="name"
-                    id="name"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="name@company.com"
-                    required=""
-                  />
-                </div>
+              <div class="space-y-4 md:space-y-6">
                 <div>
                   <label
                     for="email"
@@ -98,8 +66,8 @@ function Signup() {
                     Your email
                   </label>
                   <input
-                    value={RegistrationValue.email}
                     onChange={handleChange}
+                    value={loginValues.email}
                     type="email"
                     name="email"
                     id="email"
@@ -116,8 +84,8 @@ function Signup() {
                     Password
                   </label>
                   <input
-                    value={RegistrationValue.password}
                     onChange={handleChange}
+                    value={loginValues.password}
                     type="password"
                     name="password"
                     id="password"
@@ -126,6 +94,7 @@ function Signup() {
                     required=""
                   />
                 </div>
+                
                 <div class="flex items-start">
                   <div class="flex items-center h-5">
                     <input
@@ -153,24 +122,18 @@ function Signup() {
                 </div>
                 <button
                   onClick={handleSubmit}
-                  class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 pb-[0.6rem] focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  type="submit"
+                  class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
-                  Create an account
+                  Login
                 </button>
-                <p class="text-sm font-light text-gray-500 dark:text-gray-400 pt-[0.6rem]">
-                  Already have an account?{" "}
+                <p class="text-sm font-light text-gray-500 dark:text-gray-400 pt-[1rem]">
+                  create your account?{" "}
                   <a
                     href="#"
                     class="font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
-                    <button
-                      onClick={() => {
-                        
-                        navigate("/login")
-                      }}
-                    >
-                      Login here
-                    </button>
+                    <button onClick={()=>createAccount(false)}>Signup here</button>
                   </a>
                 </p>
               </div>
@@ -182,4 +145,4 @@ function Signup() {
   );
 }
 
-export default Signup;
+export default Login;
